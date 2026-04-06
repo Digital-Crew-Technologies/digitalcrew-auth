@@ -1,0 +1,58 @@
+{
+  "name": "@digitalcrew/auth",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Better Auth + Drizzle + Postgres for Digital Crew (multi-tenant orgs)",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "digitalcrew-auth": "./dist/cli/migrate.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./http": {
+      "types": "./dist/http.d.ts",
+      "import": "./dist/http.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "drizzle",
+    "drizzle.config.ts",
+    "tsconfig.json",
+    "NOTICE"
+  ],
+  "scripts": {
+    "prepare": "npm run build",
+    "build": "tsc",
+    "auth:generate": "npx auth@latest generate --config ./src/auth.cli.ts --output ./src/schema/auth.ts --yes",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "dotenv": "^16.4.7",
+    "better-auth": "^1.5.6",
+    "drizzle-orm": "^0.39.0",
+    "postgres": "^3.4.5",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "drizzle-kit": "^0.30.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Digital-Crew-Technologies/digitalcrew-auth.git"
+  }
+}
