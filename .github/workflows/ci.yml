@@ -40,5 +40,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      # dist/ is already built above, so run the suite directly.
+      - name: Test
+        run: node --test test/*.test.mjs
+
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=critical

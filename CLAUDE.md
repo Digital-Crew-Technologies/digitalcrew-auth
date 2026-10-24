@@ -13,7 +13,9 @@
 - `npm run auth:generate` : régénère `src/schema/auth.ts` depuis `src/auth.cli.ts` (via `npx auth@latest`, réseau requis).
 - `npm run db:generate` : génère une nouvelle migration Drizzle dans `drizzle/`.
 - `npm run db:migrate` / `npm run db:studio` : touchent une vraie base (`DIGITALCREW_AUTH_DATABASE_URL`). Ne pas les lancer sans accord humain.
-- Absents : pas de script `dev`, `lint`, `typecheck` ni `test`, aucun framework de test, aucune config ESLint/Prettier, pas de `.github/workflows` (aucune CI).
+- Tests: `npm test` (build, then `node --test test/*.test.mjs`, Node's built-in runner).
+- CI: `.github/workflows/ci.yml` runs `npm ci`, `tsc --noEmit`, the build, the tests and `npm audit`.
+- Missing: no `dev`, `lint` or `typecheck` script, no ESLint/Prettier config.
 
 ## Structure
 - `src/index.ts` : exports publics (point d'entrée `.`) ; `src/http.ts` : adaptateur `routeHandlers` (export `./http`).
@@ -33,10 +35,10 @@
 - Secrets uniquement en valeurs factices dans `.env.example` ; ne jamais lire ni committer `.env` (ignoré par `.gitignore`). Pas d'hôte de prod en dur.
 - L'API publique (`src/index.ts`, `exports` de package.json) est utilisée par d'autres dépôts : pas de rupture sans le signaler dans la PR.
 - `npm run build` doit passer : une erreur `tsc` casse l'installation chez les applications clientes.
-- Pas de suite de tests : ajouter des tests avec chaque changement de comportement suppose d'abord d'en introduire une (à proposer dans la PR, pas en douce).
+- Tests live in `test/*.test.mjs` and run against the built `dist/`: add or update a test with each behaviour change.
 
 ## Flux Git
 - Branche `claude/<clé-de-la-carte>-<mot-clé>`, partie de `main`.
 - PR vers `main` (branche par défaut) avec relecture humaine.
 - Jamais de push sur `main` ni `develop`, jamais de merge, jamais de force-push.
-- Avant de pousser : `npm run build` ou `npx tsc --noEmit` (seule vérification disponible : ni lint, ni script typecheck, ni tests).
+- Before pushing: `npx tsc --noEmit` and `npm test` (there is no lint).
