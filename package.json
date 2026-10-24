@@ -54,5 +54,11 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Digital-Crew-Technologies/digitalcrew-auth.git"
+  },
+  "overrides": {
+    "better-auth": {
+      "drizzle-kit": "$drizzle-kit",
+      "drizzle-orm": "$drizzle-orm"
+    }
   }
 }
