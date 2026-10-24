@@ -62,6 +62,7 @@ Copy `.env.example` to `.env` and set values. They are validated with Zod when y
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Optional pair | Omit both, or set both, for Google sign-in                                                                                                                |
 | `DIGITALCREW_AUTH_COOKIE_DOMAIN`            | No            | Production SSO across subdomains: root domain with a leading dot, e.g. `.example.com`                                                                     |
 | `NODE_ENV`                                  | No            | `development` / `production` / `test` — affects `secure` cookies in production                                                                            |
+| `APP_ENV`                                   | No            | `production` (default) / `preprod` / `staging`. Outside production, `loadAuthEnv()` throws if a `DIGITALCREW_AUTH_*` value names a production host (`*.digitalcrew.tech`); see `src/app-env.ts`|
 | `AUTH_MAX_ORGANIZATIONS_PER_USER`           | No            | Cap how many organizations a user may create (omit = unlimited)                                                                                           |
 | `AUTH_MAX_MEMBERS_PER_ORGAN`                | No            | Member limit per org (default **100** if omitted)                                                                                                         |
 | `AUTH_ALLOW_USER_CREATE_ORGAN`              | No            | `true` or `false` — whether end users can create orgs (default **true**). Set `false` if only your orchestrator creates tenants                           |
@@ -196,6 +197,7 @@ Prefer extending schema in this package and exporting tables from `@digitalcrew/
 | Script                  | Description                                  |
 | ----------------------- | -------------------------------------------- |
 | `npm run build`         | Compile `@digitalcrew/auth` to `dist/`       |
+| `npm test`              | Build, then run the `node:test` suite        |
 | `npm run auth:generate` | Regenerate Drizzle schema from `auth.cli.ts` |
 | `npm run db:generate`   | Generate a new Drizzle migration             |
 | `npm run db:migrate`    | Apply migrations                             |
