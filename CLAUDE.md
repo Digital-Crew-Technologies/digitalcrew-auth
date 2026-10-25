@@ -13,8 +13,9 @@
 - `npm run auth:generate`: regenerates `src/schema/auth.ts` from `src/auth.cli.ts` (through `npx auth@latest`, needs the network).
 - `npm run db:generate`: generates a new Drizzle migration in `drizzle/`.
 - `npm run db:migrate` / `npm run db:studio`: touch a real database (`DIGITALCREW_AUTH_DATABASE_URL`). Do not run them without human approval.
-- Missing: no `dev`, `lint`, `typecheck` or `test` script, no test framework, no ESLint/Prettier config.
-- CI: `.github/workflows/ci.yml` runs `npm ci`, `npx tsc --noEmit`, `npm run build` and `npm audit --omit=dev --audit-level=critical`.
+- Tests: `npm test` (build, then `node --test test/*.test.mjs`, Node's built-in runner).
+- CI: `.github/workflows/ci.yml` runs `npm ci`, `npx tsc --noEmit`, `npm run build`, the tests and `npm audit --omit=dev --audit-level=critical`.
+- Missing: no `dev`, `lint` or `typecheck` script, no ESLint/Prettier config.
 
 ## Structure
 - `src/index.ts`: public exports (`.` entry point); `src/http.ts`: `routeHandlers` adapter (`./http` export).
@@ -34,10 +35,10 @@
 - Secrets only as dummy values in `.env.example`; never read or commit `.env` (ignored by `.gitignore`). No hard-coded production host.
 - The public API (`src/index.ts`, `exports` in package.json) is used by other repositories: no breaking change without saying so in the PR.
 - `npm run build` must pass: a `tsc` error breaks installation in client applications.
-- No test suite: adding tests with every behaviour change first means introducing one (propose it in the PR, do not slip it in).
+- Tests live in `test/*.test.mjs` and run against the built `dist/`: add or update a test with each behaviour change.
 
 ## Git flow
 - Branch `claude/<card-key>-<keyword>`, from `main`.
 - PR to `main` (the default branch) with human review.
 - Never push to `main` or `develop`, never merge, never force-push.
-- Before pushing: `npm run build` or `npx tsc --noEmit` (the only check available: no lint, no typecheck script, no tests).
+- Before pushing: `npx tsc --noEmit` and `npm test` (there is no lint).

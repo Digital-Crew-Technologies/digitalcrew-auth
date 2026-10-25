@@ -30,6 +30,7 @@
   "scripts": {
     "prepare": "npm run build",
     "build": "tsc",
+    "test": "npm run build && node --test test/*.test.mjs",
     "auth:generate": "npx auth@latest generate --config ./src/auth.cli.ts --output ./src/schema/auth.ts --yes",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",

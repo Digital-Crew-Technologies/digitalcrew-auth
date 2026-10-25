@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { appEnv, assertNoProductionHostsInEnv, type AppEnv } from "./app-env.js";
 
 /**
  * Raw process env before normalization.
@@ -24,6 +25,8 @@ const envSchemaRaw = z
     GOOGLE_CLIENT_SECRET: z.string().optional(),
     DIGITALCREW_AUTH_COOKIE_DOMAIN: z.string().optional(),
     NODE_ENV: z.enum(["development", "production", "test"]).optional(),
+    /** production (default) | preprod | staging. See src/app-env.ts. */
+    APP_ENV: z.string().optional(),
 
     AUTH_MAX_ORGANIZATIONS_PER_USER: z.coerce
       .number()
@@ -47,8 +50,10 @@ const envSchemaRaw = z
 
 export type DigitalcrewAuthEnv = Omit<
   z.infer<typeof envSchemaRaw>,
-  "DIGITALCREW_AUTH_DATABASE_URL"
+  "DIGITALCREW_AUTH_DATABASE_URL" | "APP_ENV"
 > & {
+  /** Resolved APP_ENV (`production` when unset). */
+  APP_ENV?: AppEnv;
   /** Resolved Postgres URL for Better Auth / Drizzle (from `DIGITALCREW_AUTH_DATABASE_URL`). */
   DATABASE_URL: string;
 };
@@ -64,10 +69,19 @@ export function loadAuthEnv(
     );
   }
   const raw = parsed.data;
+  // Outside production, refuse any auth variable that names a production host.
+  assertNoProductionHostsInEnv(
+    Object.fromEntries(
+      Object.entries(env).filter(
+        ([name]) => name === "APP_ENV" || name.startsWith("DIGITALCREW_AUTH_"),
+      ),
+    ),
+  );
   const databaseUrl = raw.DIGITALCREW_AUTH_DATABASE_URL;
-  const { DIGITALCREW_AUTH_DATABASE_URL: _a, ...rest } = raw;
+  const { DIGITALCREW_AUTH_DATABASE_URL: _a, APP_ENV: _e, ...rest } = raw;
   return {
     ...rest,
+    APP_ENV: appEnv(env),
     DATABASE_URL: databaseUrl,
   };
 }
